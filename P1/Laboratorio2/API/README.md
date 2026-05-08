@@ -2,7 +2,7 @@
 
 Este proyecto es una API REST desarrollada con Node.js, Express y PostgreSQL para gestionar hoteles, clientes y reservas.
 
-La hice para la practica de la materia y aqui dejo los pasos para ejecutarla facilmente.
+Pasos para ejecutarla facilmente.
 
 ## Integrantes
 
