@@ -1,0 +1,26 @@
+<%- include('../partials/head') %>
+
+<section class="auth-wrap">
+  <form class="panel" action="/albums" method="POST">
+    <h1>Solicitud de album</h1>
+    <p class="muted">Tu album quedara en estado pendiente hasta revision del supervisor.</p>
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <label for="title">Titulo</label>
+    <input id="title" name="title" type="text" maxlength="120" required />
+
+    <label for="description">Descripcion</label>
+    <textarea id="description" name="description" rows="5" maxlength="900" required></textarea>
+
+    <label for="privacy">Privacidad inicial</label>
+    <select id="privacy" name="privacy" required>
+      <option value="publico">Publico</option>
+      <option value="privado">Privado</option>
+    </select>
+
+    <button class="btn primary" type="submit">Enviar solicitud</button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

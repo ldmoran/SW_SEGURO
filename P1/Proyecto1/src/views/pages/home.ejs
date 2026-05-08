@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+
+<section class="hero">
+  <div>
+    <p class="eyebrow">GALERIA PUBLICA RESILIENTE</p>
+    <h1>Sube imagenes con validacion real, analisis esteganografico y control por roles.</h1>
+    <p class="lead">
+      SecureFrame protege la cadena completa: autenticacion robusta, aprobacion de albums,
+      cuarentena automatica y publicacion segura para visitantes.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="/register">Empezar ahora</a>
+      <a class="btn" href="/gallery">Ver galeria</a>
+    </div>
+  </div>
+
+  <article class="hero-card">
+    <h3>Controles activos</h3>
+    <ul>
+      <li>Magic numbers en upload (no solo extension)</li>
+      <li>Re-encoding + limpieza EXIF</li>
+      <li>Analisis heuristico LSB y EOF</li>
+      <li>CSP + cabeceras de hardening</li>
+      <li>Flujo de cuarentena para supervisor</li>
+    </ul>
+  </article>
+</section>
+
+<section>
+  <h2 class="section-title">Albums destacados</h2>
+  <div class="grid cards">
+    <% if (featuredAlbums.length === 0) { %>
+      <article class="card">
+        <h3>Aun no hay contenido</h3>
+        <p>Registra un usuario y solicita tu primer album para empezar.</p>
+      </article>
+    <% } %>
+
+    <% featuredAlbums.forEach((album) => { %>
+      <article class="card">
+        <h3><%= album.title %></h3>
+        <p><%= album.description %></p>
+        <p class="meta">Autor: <%= album.owner %> | Imagenes: <%= album.image_count %></p>
+        <a href="/gallery/album/<%= album.id %>">Abrir album</a>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

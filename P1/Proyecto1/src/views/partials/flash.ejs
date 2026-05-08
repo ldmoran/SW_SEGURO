@@ -1,0 +1,6 @@
+<% const flashMsg = typeof flash !== 'undefined' ? flash : null; %>
+<% if (flashMsg) { %>
+  <section class="flash <%= flashMsg.type %>">
+    <p><%= flashMsg.message %></p>
+  </section>
+<% } %>

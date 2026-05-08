@@ -1,0 +1,26 @@
+<header class="site-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">SF</span>
+    <span>SecureFrame</span>
+  </a>
+
+  <nav class="nav">
+    <a href="/gallery">Galeria</a>
+    <% const currentUser = typeof user !== 'undefined' ? user : null; %>
+    <% const token = typeof csrfToken !== 'undefined' ? csrfToken : ''; %>
+    <% if (!currentUser) { %>
+      <a href="/login">Iniciar sesion</a>
+      <a href="/register" class="btn ghost">Crear cuenta</a>
+    <% } else { %>
+      <a href="/dashboard">Mi panel</a>
+      <% if (currentUser.role === 'supervisor') { %>
+        <a href="/supervisor/albums">Revisar albums</a>
+        <a href="/supervisor/quarantine">Cuarentena</a>
+      <% } %>
+      <form action="/logout" method="POST" class="inline-form">
+        <input type="hidden" name="_csrf" value="<%= token %>" />
+        <button class="btn ghost" type="submit">Salir</button>
+      </form>
+    <% } %>
+  </nav>
+</header>

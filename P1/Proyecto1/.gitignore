@@ -1,0 +1,7 @@
+node_modules/
+.env
+npm-debug.log*
+src/storage/clean/*
+src/storage/rejected/*
+!src/storage/clean/.gitkeep
+!src/storage/rejected/.gitkeep

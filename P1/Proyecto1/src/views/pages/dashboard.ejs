@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+
+<section class="panel">
+  <div class="row-space">
+    <h1>Mi panel</h1>
+    <a class="btn" href="/albums/new">Solicitar nuevo album</a>
+  </div>
+  <p class="muted">Aqui controlas tus albums y subidas.</p>
+</section>
+
+<section class="grid cards">
+  <% if (albums.length === 0) { %>
+    <article class="card">
+      <h3>Sin albums todavia</h3>
+      <p>Solicita un album para iniciar el flujo de revision.</p>
+    </article>
+  <% } %>
+
+  <% albums.forEach((album) => { %>
+    <article class="card">
+      <h3><%= album.title %></h3>
+      <p><%= album.description %></p>
+      <p class="meta">Estado: <strong><%= album.status %></strong> | Privacidad: <%= album.privacy %></p>
+
+      <% if (album.status === 'aprobado') { %>
+        <a href="/albums/<%= album.id %>/upload">Subir imagen</a>
+      <% } %>
+    </article>
+  <% }) %>
+</section>
+
+<%- include('../partials/foot') %>

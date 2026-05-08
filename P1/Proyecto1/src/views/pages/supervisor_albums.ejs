@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+
+<section class="panel">
+  <h1>Solicitudes de albums</h1>
+  <p class="muted">Aprueba o rechaza cada album pendiente.</p>
+</section>
+
+<section class="grid cards">
+  <% if (pendingAlbums.length === 0) { %>
+    <article class="card">
+      <h3>Sin pendientes</h3>
+      <p>No hay albums esperando revision.</p>
+    </article>
+  <% } %>
+
+  <% pendingAlbums.forEach((album) => { %>
+    <article class="card">
+      <h3><%= album.title %></h3>
+      <p><%= album.description %></p>
+      <p class="meta">Autor: <%= album.owner %> (<%= album.email %>) | Privacidad: <%= album.privacy %></p>
+
+      <form action="/supervisor/albums/<%= album.id %>/review" method="POST" class="review-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <label for="note-<%= album.id %>">Nota (opcional)</label>
+        <textarea id="note-<%= album.id %>" name="note" rows="2" maxlength="220"></textarea>
+        <div class="row-gap">
+          <button class="btn primary" type="submit" name="action" value="approve">Aprobar</button>
+          <button class="btn danger" type="submit" name="action" value="reject">Rechazar</button>
+        </div>
+      </form>
+    </article>
+  <% }) %>
+</section>
+
+<%- include('../partials/foot') %>

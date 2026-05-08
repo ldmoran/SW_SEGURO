@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+
+<section class="panel">
+  <h1><%= album.title %></h1>
+  <p><%= album.description %></p>
+  <p class="meta">Creador: <%= album.owner %></p>
+</section>
+
+<section class="masonry">
+  <% if (images.length === 0) { %>
+    <article class="card">
+      <h3>Sin imagenes</h3>
+      <p>Este album aun no tiene imagenes publicas.</p>
+    </article>
+  <% } %>
+
+  <% images.forEach((img) => { %>
+    <figure class="shot">
+      <img src="/media/<%= img.stored_name %>" alt="Imagen de album" loading="lazy" />
+      <figcaption>
+        <strong><%= img.original_name %></strong>
+        <span>Score analisis: <%= img.analysis_score %>/100</span>
+      </figcaption>
+    </figure>
+  <% }) %>
+</section>
+
+<%- include('../partials/foot') %>

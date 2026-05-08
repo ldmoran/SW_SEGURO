@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+
+<section class="auth-wrap">
+  <form class="panel" action="/login" method="POST" autocomplete="off">
+    <h1>Iniciar sesion</h1>
+    <p class="muted">Ingresa con usuario o correo.</p>
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <label for="identifier">Usuario o correo</label>
+    <input id="identifier" name="identifier" type="text" maxlength="120" required />
+
+    <label for="password">Contrasena</label>
+    <input id="password" name="password" type="password" maxlength="120" required />
+
+    <button class="btn primary" type="submit">Entrar</button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

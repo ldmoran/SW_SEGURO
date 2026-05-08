@@ -1,0 +1,155 @@
+const fs = require('fs/promises');
+const path = require('path');
+const express = require('express');
+const multer = require('multer');
+const sharp = require('sharp');
+const FileType = require('file-type');
+const { v4: uuidv4 } = require('uuid');
+const { pool } = require('../config/db');
+const { requireAuth } = require('../middlewares/auth');
+const { uploadLimiter } = require('../middlewares/security');
+const { albumValidation, validateRequest } = require('../utils/validators');
+const { analyzeImageBuffer } = require('../services/stegAnalysis');
+const { renderError } = require('../utils/errorHelper');
+
+const router = express.Router();
+const maxUploadBytes = Number(process.env.MAX_UPLOAD_MB || 6) * 1024 * 1024;
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: maxUploadBytes }
+});
+
+router.get('/albums/new', requireAuth, (req, res) => {
+  res.render('pages/album_new', {
+    title: 'Solicitar album'
+  });
+});
+
+router.post('/albums', requireAuth, albumValidation, validateRequest, async (req, res, next) => {
+  const { title, description, privacy } = req.body;
+  try {
+    await pool.query(
+      `INSERT INTO albums (owner_id, title, description, privacy, status)
+       VALUES ($1, $2, $3, $4, 'pendiente')`,
+      [req.session.user.id, title, description, privacy]
+    );
+
+    req.session.flash = {
+      type: 'success',
+      message: 'Album enviado a revision.'
+    };
+    return res.redirect('/dashboard');
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/albums/:id/upload', requireAuth, async (req, res, next) => {
+  try {
+    const album = await pool.query(
+      `SELECT id, title, status
+       FROM albums
+       WHERE id = $1 AND owner_id = $2`,
+      [req.params.id, req.session.user.id]
+    );
+
+    if (album.rowCount === 0) {
+      return renderError(res, req, 404, 'No encontrado', 'Album no disponible para este usuario.');
+    }
+
+    if (album.rows[0].status !== 'aprobado') {
+      return renderError(res, req, 403, 'Accion bloqueada', 'Solo puedes subir imagenes a albumes aprobados.');
+    }
+
+    return res.render('pages/upload', {
+      title: 'Subir imagen segura',
+      album: album.rows[0],
+      maxUploadMb: Number(process.env.MAX_UPLOAD_MB || 6)
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/albums/:id/upload', requireAuth, uploadLimiter, upload.single('image'), async (req, res, next) => {
+  try {
+    const album = await pool.query(
+      `SELECT id, title, status
+       FROM albums
+       WHERE id = $1 AND owner_id = $2`,
+      [req.params.id, req.session.user.id]
+    );
+
+    if (album.rowCount === 0 || album.rows[0].status !== 'aprobado') {
+      return renderError(res, req, 403, 'Accion bloqueada', 'No tienes permiso para subir en este album.');
+    }
+
+    if (!req.file || !req.file.buffer) {
+      req.session.flash = { type: 'error', message: 'Debes seleccionar una imagen valida.' };
+      return res.redirect(`/albums/${req.params.id}/upload`);
+    }
+
+    const detectedType = await FileType.fromBuffer(req.file.buffer);
+    const allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!detectedType || !allowedMime.includes(detectedType.mime)) {
+      req.session.flash = { type: 'error', message: 'Formato invalido. Solo se acepta JPG, PNG o WEBP reales.' };
+      return res.redirect(`/albums/${req.params.id}/upload`);
+    }
+
+    const analysis = await analyzeImageBuffer(req.file.buffer, detectedType.mime);
+    const normalizedBuffer = await sharp(req.file.buffer)
+      .rotate()
+      .resize({ width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 90 })
+      .toBuffer();
+
+    const filename = `${uuidv4()}.webp`;
+    const targetFolder = analysis.suspicious ? 'rejected' : 'clean';
+    const fullPath = path.resolve(__dirname, '..', 'storage', targetFolder, filename);
+
+    await fs.writeFile(fullPath, normalizedBuffer);
+
+    const imageStatus = analysis.suspicious ? 'cuarentena' : 'aprobada';
+    await pool.query(
+      `INSERT INTO images
+        (album_id, uploader_id, original_name, stored_name, mime_type, size_bytes, status, analysis_score, analysis_reason, analysis_json)
+       VALUES
+        ($1, $2, $3, $4, 'image/webp', $5, $6, $7, $8, $9::jsonb)`,
+      [
+        req.params.id,
+        req.session.user.id,
+        req.file.originalname,
+        filename,
+        normalizedBuffer.length,
+        imageStatus,
+        analysis.score,
+        analysis.reason,
+        JSON.stringify(analysis.details)
+      ]
+    );
+
+    if (analysis.suspicious) {
+      req.session.flash = {
+        type: 'error',
+        message: 'Imagen enviada a cuarentena por analisis esteganografico.'
+      };
+    } else {
+      req.session.flash = {
+        type: 'success',
+        message: 'Imagen analizada y publicada correctamente.'
+      };
+    }
+
+    return res.redirect('/dashboard');
+  } catch (error) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      req.session.flash = { type: 'error', message: 'Archivo demasiado grande.' };
+      return res.redirect(`/albums/${req.params.id}/upload`);
+    }
+    return next(error);
+  }
+});
+
+module.exports = router;

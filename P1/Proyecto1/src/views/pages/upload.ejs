@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+
+<section class="auth-wrap">
+  <form class="panel" action="/albums/<%= album.id %>/upload" method="POST" enctype="multipart/form-data">
+    <h1>Subida segura de imagen</h1>
+    <p class="muted">
+      Album: <strong><%= album.title %></strong>. El archivo sera validado por magic numbers,
+      re-encoding sin EXIF y analisis esteganografico.
+    </p>
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <label for="image">Archivo (JPG, PNG o WEBP, max <%= maxUploadMb %> MB)</label>
+    <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,.webp" required />
+
+    <button class="btn primary" type="submit">Analizar y subir</button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

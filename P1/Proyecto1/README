@@ -1,0 +1,242 @@
+# Universidad de las Fuerzas Armadas ESPE
+
+## Departamento de Ciencias de la Computaci ́on
+
+```
+Carrera de Ingenier ́ıa en Software
+```
+```
+Desarrollo de Software Seguro
+```
+# Proyecto Integrador
+
+## Docente: Prof. Geovanny Cudco
+
+## 21 de abril de 2026
+
+# 1. Tema
+
+Desarrollo Seguro de una galer ́ıa multimedia p ́ublica con detecci ́on de esteganograf ́ıa
+y gesti ́on de riesgos en el SDLC.
+
+# 2. Tipo de actividad
+
+Proyecto Integrador. Combina el desarrollo de una aplicaci ́on web funcional con la
+elaboraci ́on de un plan estrat ́egico de seguridad documentado.
+
+# 3. Contexto
+
+La seguridad del software ha dejado de ser una capa perimetral para convertirse
+en una propiedad intr ́ınseca del producto. En aplicaciones web modernas que gestionan
+contenido generado por el usuario (UGC), como galer ́ıas p ́ublicas, las amenazas no solo
+provienen de inyecciones SQL o XSS, sino tambi ́en de vectores m ́as sofisticados como la
+esteganograf ́ıa.
+En este escenario, un repositorio multimedia aparentemente inofensivo ( ́albumes
+de fotos) puede convertirse en un canal encubierto para la exfiltraci ́on de datos, la
+distribuci ́on de malware o la coordinaci ́on de actividades maliciosas sin ser detectado
+por firewalls tradicionales. Este proyecto aborda la problem ́atica desde una perspectiva
+hol ́ıstica: no basta con programar una funcionalidad de ”subir imagen”; es necesario
+aplicar una Gesti ́on de Riesgos formal, entender las vulnerabilidades a todos los niveles
+(desde el hardware que procesa la imagen hasta la arquitectura de microservicios si la
+hubiera) y dise ̃nar un software resiliente que mantenga sus propiedades de seguridad
+incluso bajo ataque.
+
+
+# 4. Objetivo
+
+## 4.1. General
+
+Dise ̃nar e implementar una aplicaci ́on web segura y resiliente para la gesti ́on de
+una galer ́ıa p ́ublica de im ́agenes, aplicando principios de seguridad a lo largo de todo
+el ciclo de vida de desarrollo, con un enfoque particular en la mitigaci ́on de amenazas de
+esteganograf ́ıa y la gesti ́on de accesos basada en roles.
+
+## 4.2. Espec ́ıficos:
+
+```
+Analizar y clasificar amenazas a nivel de c ́odigo, dise ̃no, arquitectura y hardware
+que afectan a un repositorio multimedia p ́ublico.
+```
+```
+Implementar un Plan Estrat ́egico de Seguridad que incluya directrices para las fases
+de Requisitos, Dise ̃no, Desarrollo, Pruebas y Despliegue (SDLC).
+```
+```
+Desarrollar controles de seguridad perimetral y puntos de ataque, incluyendo
+validaci ́on de entradas, control de acceso basado en roles (RBAC) y gesti ́on segura
+de sesiones.
+```
+```
+Integrar un m ́odulo de an ́alisis de contenido que permita detectar posibles
+manipulaciones por esteganograf ́ıa en archivos de imagen subidos por el usuario.
+```
+```
+Evaluar el coste potencial de las vulnerabilidades en el contexto del negocio (da ̃no
+reputacional, suplantaci ́on de identidad a trav ́es de im ́agenes maliciosas).
+```
+# 5. Descripci ́on de la Actividad
+
+El estudiante actuar ́a como Arquitecto de Software y Desarrollador Full-Stack para
+construir “SecureFrame Gallery”. La actividad se divide en dos grandes componentes:
+
+## 5.1. Documento de Plan Estrat ́egico de Seguridad
+
+El estudiante deber ́a redactar un informe que responda a las siguientes preguntas
+clave, justificando cada decisi ́on t ́ecnica desde la ́optica de los temas del curso:
+
+```
+Introducci ́on y Costes: ¿Cu ́al es el coste de una vulnerabilidad de Path Traversal
+o File Upload Bypass en este sistema? ¿Qu ́e pasar ́ıa si una imagen con un payload
+oculto en sus metadatos o p ́ıxeles se vuelve viral en la galer ́ıa p ́ublica?
+```
+```
+An ́alisis de Amenazas: Elaborar una matriz de amenazas categorizadas en:
+```
+- Hardware: (Ej. Ataques de canal lateral al procesar im ́agenes grandes que
+    causan denegaci ́on de servicio por uso excesivo de CPU/RAM).
+- C ́odigo: (Ej. Vulnerabilidades en la librer ́ıa de procesamiento de im ́agenes,
+    Buffer Overflow en el parseo de formatos, Inyecci ́on de comandos en exec de
+    herramientas de an ́alisis).
+- Dise ̃no: (Ej. Falta de segregaci ́on de roles efectiva entre “Usuario”,
+    “Supervisor” y “Visitante”).
+
+
+- Arquitectura: (Ej. Almacenamiento de archivos en el mismo servidor de la
+    aplicaci ́on vs. almacenamiento en la nube con pol ́ıticas IAM).
+
+```
+Seguridad en el SDLC: Detallar qu ́e actividades de seguridad se realizar ́an en
+cada fase (Requisitos de Confidencialidad/Integridad, Threat Modeling en Dise ̃no,
+SAST en Desarrollo, DAST y Fuzzing en Pruebas).
+```
+```
+Directrices Adicionales y Frameworks: Mencionar c ́omo se alinea la soluci ́on
+con est ́andares como OWASP ASVS (Nivel 2) o NIST SP 800-218 (SSDF). No se
+pide implementar un framework comercial espec ́ıfico, sino referenciar sus principios.
+```
+## 5.2. Desarrollo de la Aplicaci ́on Web
+
+```
+Implementaci ́on de la galer ́ıa con las siguientes particularidades de seguridad.
+```
+# 6. Requisitos Funcionales
+
+## RF01: Registro y Autenticaci ́on Segura
+
+```
+El sistema permitir ́a el registro de nuevos usuarios.
+```
+```
+Control de Seguridad Impl ́ıcito: Pol ́ıtica de contrase ̃nas robustas, protecci ́on
+contra enumeraci ́on de usuarios, almacenamiento de credenciales con salting y
+hashing fuerte (ej. Argon2id), protecci ́on contra fuerza bruta (Rate Limiting).
+```
+## RF02: Gesti ́on deAlbumes (Solicitud y Aprobaci ́on) ́
+
+```
+El usuario autenticado solicita la creaci ́on de un nuevo ́album (T ́ıtulo, Descripci ́on,
+Privacidad inicial).
+```
+```
+La solicitud queda en estado “Pendiente de Revisi ́on”.
+```
+```
+El rol Supervisor/Administrador visualiza un panel con las solicitudes y las aprueba
+o rechaza.
+```
+```
+Control de Seguridad Impl ́ıcito: Validaci ́on estricta de los campos de entrada
+para prevenir Stored XSS en la descripci ́on del ́album.
+```
+## RF03: Subida de Im ́agenes y Detecci ́on de Esteganograf ́ıa
+
+## (N ́ucleo del Proyecto)
+
+```
+Un usuario con ́album aprobado puede subir archivos de imagen.
+```
+```
+Punto de Control Cr ́ıtico: Antes de almacenar definitivamente el archivo o
+hacerlo visible, el sistema DEBE procesar el archivo para detectar si contiene datos
+ocultos mediante esteganograf ́ıa.
+```
+```
+La detecci ́on no debe basarse ́unicamente en la extensi ́on o el MIME Type, sino en
+un an ́alisis estructural del archivo.
+```
+```
+Flujo de Validaci ́on:
+```
+
+- Validaci ́on de tipo MIME real (File Magic Numbers ).
+- Re-encoding y stripping de metadatos EXIF (Amenaza de Geolocalizaci ́on /
+    XSS en EXIF).
+- An ́alisis Esteganogr ́afico Automatizado: El sistema ejecutar ́a un proceso
+    (s ́ıncrono o as ́ıncrono) que analice el histograma de color, el ruido (an ́alisis
+    LSB - Least Significant Bit) o estructuras de marcadores sospechosos (EOF
+    attacks).
+- Resultado: Si el an ́alisis devuelve “Sospechoso” o “Positivo”, el archivo se
+    pone en cuarentena para revisi ́on manual por el Supervisor. Si es “Limpio”, se
+    almacena y se muestra en la galer ́ıa p ́ublica.
+
+## RF04: Flujo de Revisi ́on Manual (Supervisor)
+
+```
+El Supervisor accede a una bandeja de “Im ́agenes en Cuarentena”.
+```
+```
+Puede ver la imagen y los metadatos del an ́alisis autom ́atico (por qu ́e fue marcada).
+```
+```
+Decide: “Aprobar (Ignorar alerta)” o “Rechazar (Eliminar archivo)”.
+```
+## RF05: Visualizaci ́on P ́ublica Segura
+
+```
+Los visitantes no autenticados pueden navegar por los ́albumes aprobados y ver las
+im ́agenes.
+```
+```
+Seguridad Perimetral: Implementaci ́on de Content Security Policy (CSP)
+y cabeceras X-Content-Type-Options: nosniff para mitigar ataques de MIME
+Sniffing y XSS a trav ́es de archivos SVG maliciosos disfrazados de im ́agenes.
+```
+# 7. Entregables
+
+El estudiante deber ́a entregar un ́unico archivo comprimido o un repositorio que
+contenga:
+
+```
+C ́odigo Fuente: Proyecto completo de la aplicaci ́on web.
+```
+```
+Repositorio de GitHub: Enlace al repositorio PUBLICO ́ con el historial de
+commits completo. El archivo README.md debe incluir:
+```
+- Instrucciones claras de despliegue (variables de entorno necesarias,
+    dependencias).
+- Credenciales de prueba para los roles (Usuario demo, Supervisor demo).
+- Justificaci ́on t ́ecnica de la librer ́ıa/m ́etodo elegido para la detecci ́on de
+    esteganograf ́ıa.
+
+```
+Documento de Plan Estrat ́egico (PDF): Memoria t ́ecnica que desarrolle los
+puntos del Componente A descrito anteriormente (An ́alisis de Amenazas, Gesti ́on
+de Riesgos, Seguridad en el SDLC). Extensi ́on m ́axima: 10 p ́aginas (sin contar
+portada).
+```
+
+# 8. Fecha de entrega
+
+```
+12 de mayo, 11h00. No se aceptar ́an entregas posteriores a esta hora.
+```
+Modalidad de Defensa: Las defensas se realizar ́an de manera aleatoria durante las
+sesiones de clase del 12 de mayo y 14 de mayo.
+
+Importante: Todos los estudiantes deben tener su proyecto desplegado y funcional
+en el momento de la entrega. Si un estudiante es seleccionado al azar y su aplicaci ́on no
+est ́a operativa (servidor ca ́ıdo, dependencias rotas), la calificaci ́on correspondiente a la
+defensa oral ser ́a de 0.
+
+

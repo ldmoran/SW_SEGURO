@@ -1,0 +1,26 @@
+<%- include('../partials/head') %>
+
+<section class="panel">
+  <h1>Galeria publica</h1>
+  <p class="muted">Solo se muestran albums aprobados con imagenes limpias o revisadas.</p>
+</section>
+
+<section class="grid cards">
+  <% if (albums.length === 0) { %>
+    <article class="card">
+      <h3>Sin resultados</h3>
+      <p>Aun no hay albums publicados.</p>
+    </article>
+  <% } %>
+
+  <% albums.forEach((album) => { %>
+    <article class="card">
+      <h3><%= album.title %></h3>
+      <p><%= album.description %></p>
+      <p class="meta">Autor: <%= album.owner %> | Imagenes: <%= album.image_count %></p>
+      <a href="/gallery/album/<%= album.id %>">Ver album</a>
+    </article>
+  <% }) %>
+</section>
+
+<%- include('../partials/foot') %>

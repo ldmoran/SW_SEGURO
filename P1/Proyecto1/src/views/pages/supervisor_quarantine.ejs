@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+
+<section class="panel">
+  <h1>Bandeja de cuarentena</h1>
+  <p class="muted">Revisa imagenes sospechosas antes de su publicacion.</p>
+</section>
+
+<section class="grid cards">
+  <% if (images.length === 0) { %>
+    <article class="card">
+      <h3>Sin imagenes en cuarentena</h3>
+      <p>Todo el contenido reciente fue clasificado como limpio.</p>
+    </article>
+  <% } %>
+
+  <% images.forEach((img) => { %>
+    <article class="card">
+      <h3><%= img.original_name %></h3>
+      <p><strong>Album:</strong> <%= img.album_title %> (#<%= img.album_id %>)</p>
+      <p><strong>Subido por:</strong> <%= img.uploader %></p>
+      <p><strong>Score:</strong> <%= img.analysis_score %>/100</p>
+      <p><strong>Motivo:</strong> <%= img.analysis_reason %></p>
+
+      <form action="/supervisor/quarantine/<%= img.id %>/review" method="POST" class="row-gap">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button class="btn primary" type="submit" name="action" value="approve">Aprobar y publicar</button>
+        <button class="btn danger" type="submit" name="action" value="reject">Rechazar</button>
+      </form>
+    </article>
+  <% }) %>
+</section>
+
+<%- include('../partials/foot') %>
