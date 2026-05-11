@@ -19,6 +19,10 @@ app.get('/health', async (_req, res) => {
   }
 });
 
+app.get('/api', (_req, res) => {
+  res.status(200).json({ message: 'API Hotel Reservas', version: '1.0.0' });
+});
+
 app.use('/api/hoteles', hotelesRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/reservas', reservasRoutes);

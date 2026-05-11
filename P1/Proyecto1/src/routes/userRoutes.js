@@ -100,6 +100,7 @@ router.post('/albums/:id/upload', requireAuth, uploadLimiter, upload.single('ima
 
     const analysis = await analyzeImageBuffer(req.file.buffer, detectedType.mime);
     const normalizedBuffer = await sharp(req.file.buffer)
+      .withMetadata(false)
       .rotate()
       .resize({ width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 90 })

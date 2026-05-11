@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
+const csrf = require('csurf');
 const pgSession = require('connect-pg-simple')(session);
 
 const { pool, runSchemaMigrations } = require('./config/db');
@@ -45,9 +46,12 @@ app.use(
   })
 );
 
+const csrfProtection = csrf({ cookie: false });
+app.use(csrfProtection);
+
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
-  res.locals.csrfToken = '';
+  res.locals.csrfToken = req.csrfToken();
   res.locals.flash = req.session.flash || null;
   req.session.flash = null;
   return next();

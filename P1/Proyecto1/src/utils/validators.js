@@ -33,11 +33,13 @@ const albumValidation = [
     .isLength({ min: 3, max: 120 })
     .withMessage('Titulo invalido.')
     .matches(/^[\w\s.,!()\-áéíóúÁÉÍÓÚñÑ]+$/)
-    .withMessage('Titulo contiene caracteres no permitidos.'),
+    .withMessage('Titulo contiene caracteres no permitidos.')
+    .escape(),
   body('description')
     .trim()
     .isLength({ min: 10, max: 900 })
-    .withMessage('Descripcion invalida.'),
+    .withMessage('Descripcion invalida.')
+    .escape(),
   body('privacy').isIn(['publico', 'privado']).withMessage('Privacidad invalida.')
 ];
 
