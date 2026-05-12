@@ -20,16 +20,20 @@
     <article class="card">
       <h3><%= album.title %></h3>
       <p><%= album.description %></p>
-      <p class="meta">Estado: <strong><%= album.status %></strong> | Privacidad: <%= album.privacy %></p>
+      <p class="meta">Estado: <strong><%= album.status %></strong> | Privacidad: <strong><%= album.privacy %></strong></p>
 
       <% if (album.status === 'aprobado') { %>
-        <a href="/albums/<%= album.id %>/upload">Subir imagen</a>
+        <div class="buttons-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;">
+          <a href="/albums/<%= album.id %>/upload" class="btn">Subir imagen</a>
+          <form method="POST" action="/albums/<%= album.id %>/privacy" style="display: inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="privacy" value="<%= album.privacy === 'publico' ? 'privado' : 'publico' %>">
+            <button type="submit" class="btn btn-secondary" style="background-color: #666;">
+              Cambiar a <%= album.privacy === 'publico' ? 'privado' : 'público' %>
+            </button>
+          </form>
+        </div>
       <% } %>
-
-      <form action="/albums/<%= album.id %>/delete" method="POST" onsubmit="return confirm('Eliminar este album y sus imagenes?');">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-        <button class="btn" type="submit">Eliminar album</button>
-      </form>
     </article>
   <% }) %>
 </section>
