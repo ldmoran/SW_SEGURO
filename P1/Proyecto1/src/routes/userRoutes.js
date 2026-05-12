@@ -72,6 +72,48 @@ router.get('/albums/:id/upload', requireAuth, async (req, res, next) => {
   }
 });
 
+router.post('/albums/:id/privacy', requireAuth, async (req, res, next) => {
+  const { privacy } = req.body;
+
+  if (!privacy || !['publico', 'privado'].includes(privacy)) {
+    req.session.flash = { type: 'error', message: 'Privacidad invalida.' };
+    return res.redirect('/dashboard');
+  }
+
+  try {
+    const album = await pool.query(
+      `SELECT id, status, owner_id FROM albums WHERE id = $1`,
+      [req.params.id]
+    );
+
+    if (album.rowCount === 0) {
+      return renderError(res, req, 404, 'No encontrado', 'Album no existe.');
+    }
+
+    if (album.rows[0].owner_id !== req.session.user.id) {
+      return renderError(res, req, 403, 'Accion bloqueada', 'No tienes permiso para editar este album.');
+    }
+
+    if (album.rows[0].status !== 'aprobado') {
+      req.session.flash = { type: 'error', message: 'Solo puedes cambiar privacidad de albums aprobados.' };
+      return res.redirect('/dashboard');
+    }
+
+    await pool.query(
+      `UPDATE albums SET privacy = $1, updated_at = NOW() WHERE id = $2`,
+      [privacy, req.params.id]
+    );
+
+    req.session.flash = {
+      type: 'success',
+      message: `Album ahora es ${privacy}.`
+    };
+    return res.redirect('/dashboard');
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.post(
   '/albums/:id/upload',
   requireAuth,
