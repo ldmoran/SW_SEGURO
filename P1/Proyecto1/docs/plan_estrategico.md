@@ -115,7 +115,6 @@ Dado este análisis de costes, la implementación de controles de seguridad es *
 - Tiempo corto → Cuarentena inmediata → Payload detectado.
 - Refina ataque basándose en timing.
 
-
 **Impacto:** Reducción efectividad de detección esteganográfica.
 
 **Probabilidad:** Baja (atacante requiere precisión de ms).
