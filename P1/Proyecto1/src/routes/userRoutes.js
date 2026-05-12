@@ -29,15 +29,22 @@ router.get('/albums/new', requireAuth, (req, res) => {
 router.post('/albums', requireAuth, albumValidation, validateRequest, async (req, res, next) => {
   const { title, description, privacy } = req.body;
   try {
+    const isSupervisor = req.session.user.role === 'supervisor';
+    const status = isSupervisor ? 'aprobado' : 'pendiente';
+    
     await pool.query(
       `INSERT INTO albums (owner_id, title, description, privacy, status)
-       VALUES ($1, $2, $3, $4, 'pendiente')`,
-      [req.session.user.id, title, description, privacy]
+       VALUES ($1, $2, $3, $4, $5)`,
+      [req.session.user.id, title, description, privacy, status]
     );
 
+    const message = isSupervisor 
+      ? 'Album creado y aprobado automaticamente.' 
+      : 'Album enviado a revision.';
+    
     req.session.flash = {
       type: 'success',
-      message: 'Album enviado a revision.'
+      message: message
     };
     return res.redirect('/dashboard');
   } catch (error) {
