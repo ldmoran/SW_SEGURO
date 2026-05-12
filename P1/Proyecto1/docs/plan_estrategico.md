@@ -105,7 +105,6 @@ Dado este análisis de costes, la implementación de controles de seguridad es *
 **Residual Risk:** Bajo. Mitigación es efectiva para ataques conocidos. Evasión: compilación de DoS via algoritmo ZLIBDEFLATE en PNG.
 
 ---
-
 #### A2.1.2 Búsqueda de Canal: Timing Attack en Análisis Esteganográfico
 **Amenaza:** Análisis esteganográfico consume tiempo variable según contenido. Atacante mide tiempo de respuesta y deduce si payload fue detectado.
 
