@@ -1,5 +1,6 @@
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const csrf = require('csurf');
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -32,8 +33,11 @@ const hardeningHeaders = helmet({
   crossOriginEmbedderPolicy: false
 });
 
+const csrfProtection = csrf({ cookie: false });
+
 module.exports = {
   authLimiter,
   uploadLimiter,
-  hardeningHeaders
+  hardeningHeaders,
+  csrfProtection
 };

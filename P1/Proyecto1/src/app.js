@@ -4,12 +4,11 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
-const csrf = require('csurf');
 const pgSession = require('connect-pg-simple')(session);
 
 const { pool, runSchemaMigrations } = require('./config/db');
 const { ensureDemoUsers } = require('./services/bootstrapService');
-const { hardeningHeaders } = require('./middlewares/security');
+const { hardeningHeaders, csrfProtection } = require('./middlewares/security');
 
 const publicRoutes = require('./routes/publicRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -46,12 +45,19 @@ app.use(
   })
 );
 
-const csrfProtection = csrf({ cookie: false });
-app.use(csrfProtection);
+app.use((req, res, next) => {
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+    return csrfProtection(req, res, next);
+  }
+  if (req.is('multipart/form-data')) {
+    return next();
+  }
+  return csrfProtection(req, res, next);
+});
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
-  res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
   res.locals.flash = req.session.flash || null;
   req.session.flash = null;
   return next();

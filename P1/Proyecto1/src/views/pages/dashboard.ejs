@@ -25,6 +25,11 @@
       <% if (album.status === 'aprobado') { %>
         <a href="/albums/<%= album.id %>/upload">Subir imagen</a>
       <% } %>
+
+      <form action="/albums/<%= album.id %>/delete" method="POST" onsubmit="return confirm('Eliminar este album y sus imagenes?');">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button class="btn" type="submit">Eliminar album</button>
+      </form>
     </article>
   <% }) %>
 </section>
